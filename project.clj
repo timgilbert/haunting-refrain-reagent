@@ -21,7 +21,9 @@
                  [environ "1.0.0"]
                  [leiningen "2.5.0"]
                  [figwheel "0.1.5-SNAPSHOT"]
-                 [prone "0.6.0"]]
+                 [prone "0.6.0"]
+                 [cljs-http "0.1.21"]
+                 [kioo "0.4.0"]]
 
   :plugins [
             [lein-cljsbuild "1.0.3"]
