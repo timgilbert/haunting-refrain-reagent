@@ -26,7 +26,7 @@
                  ;; local stuff
                  [cljs-http "0.1.21"]
                  [kioo "0.4.0"]
-                 [shodan "0.4.0"]]
+                 [shodan "0.4.1"]]
 
   :plugins [
             [lein-cljsbuild "1.0.3"]
