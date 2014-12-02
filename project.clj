@@ -6,7 +6,8 @@
 
   :source-paths ["src/clj" "src/cljs"]
 
-  :dependencies [[org.clojure/clojure "1.6.0"]
+  :dependencies [;; lein new reagent
+                 [org.clojure/clojure "1.6.0"]
                  [reagent "0.4.3"]
                  [reagent-utils "0.1.0"]
                  [secretary "1.2.1"]
@@ -17,13 +18,15 @@
                  [ring/ring-defaults "0.1.2"]
                  [prone "0.6.0"]
                  [compojure "1.2.2"]
-                 [selmer "0.7.5"]
+                 [selmer "0.7.6"]
                  [environ "1.0.0"]
                  [leiningen "2.5.0"]
                  [figwheel "0.1.5-SNAPSHOT"]
                  [prone "0.6.0"]
+                 ;; local stuff
                  [cljs-http "0.1.21"]
-                 [kioo "0.4.0"]]
+                 [kioo "0.4.0"]
+                 [shodan "0.4.0"]]
 
   :plugins [
             [lein-cljsbuild "1.0.3"]
