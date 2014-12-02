@@ -1,5 +1,7 @@
 (ns haunting-refrain.core
-    (:require [reagent.core :as reagent :refer [atom]]
+    (:require [haunting-refrain.foursquare :as foursquare]
+              [shodan.console :as console :include-macros true]
+              [reagent.core :as reagent]
               [secretary.core :as secretary :include-macros true]
               [goog.events :as events]
               [goog.history.EventType :as EventType])
@@ -7,7 +9,7 @@
 
 ;; -------------------------
 ;; State
-(defonce app-state (atom {:text "Hello, this is: "}))
+(defonce app-state (reagent/atom {:text "Hello, this is: "}))
 
 (defn get-state [k & [default]]
   (clojure.core/get @app-state k default))
@@ -22,7 +24,8 @@
 
 (defmethod page :page1 [_]
   [:div [:h2 (get-state :text) "Page 1"]
-   [:div [:a {:href "#/page2"} "go to page 2"]]])
+   [:div [:a {:href "#/page2"} "go to page 2"]]
+   [:div [:button#redir {:on-click foursquare/redirect-to-foursquare!} "Log In"]]])
 
 (defmethod page :page2 [_]
   [:div [:h2 (get-state :text) "Page 2"]
