@@ -5,9 +5,9 @@
 
 (def ^:private foursquare-client-id "BAL2VGI3TXOWFI1TGH4O4VIHBLQ4AUC404YYSRRT5OJJEGGL")
 
-(def ^:private redirect-uri "http://localhost:3000/%23foursquare-callback")
+(def ^:private redirect-uri "http://localhost:3000/%23%2ffoursquare-callback")
 
-(def foursquare-redirect-url
+(def ^:private foursquare-redirect-url
     (str "https://foursquare.com/oauth2/authenticate"
          "?client_id=" foursquare-client-id
          "&response_type=token"
@@ -15,5 +15,3 @@
 
 (defn redirect-to-foursquare! []
     (set! (.-location js/window) foursquare-redirect-url))
-
-(defn )

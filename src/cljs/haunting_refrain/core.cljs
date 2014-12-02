@@ -1,5 +1,6 @@
 (ns haunting-refrain.core
-    (:require [haunting-refrain.foursquare :as foursquare]
+  (:require-macros [cljs.core.async.macros :refer [go]])
+  (:require [haunting-refrain.foursquare :as foursquare]
               [shodan.console :as console :include-macros true]
               [reagent.core :as reagent]
               [secretary.core :as secretary :include-macros true]
@@ -9,7 +10,9 @@
 
 ;; -------------------------
 ;; State
-(defonce app-state (reagent/atom {:text "Hello, this is: "}))
+(defonce app-state
+  (reagent/atom {:text "Hello, this is: "
+                 :foursquare-access-token nil}))
 
 (defn get-state [k & [default]]
   (clojure.core/get @app-state k default))
@@ -25,10 +28,15 @@
 (defmethod page :page1 [_]
   [:div [:h2 (get-state :text) "Page 1"]
    [:div [:a {:href "#/page2"} "go to page 2"]]
+   [:div "Token:" (get-state :foursquare-access-token)]
    [:div [:button#redir {:on-click foursquare/redirect-to-foursquare!} "Log In"]]])
 
 (defmethod page :page2 [_]
   [:div [:h2 (get-state :text) "Page 2"]
+   [:div [:a {:href "#/"} "go to page 1"]]])
+
+(defmethod page :auth-success [_]
+  [:div [:h2 (get-state :text) "Success!"]
    [:div [:a {:href "#/"} "go to page 1"]]])
 
 (defmethod page :default [_]
@@ -42,10 +50,17 @@
 (secretary/set-config! :prefix "#")
 
 (secretary/defroute "/" []
+  (console/debug "State:" (clj->js @app-state))
   (put! :current-page :page1))
 
 (secretary/defroute "/page2" []
   (put! :current-page :page2))
+
+(secretary/defroute #"/foursquare-callback#access_token=([^&]+)" [token]
+  (console/debug "Got foursquare token:" token)
+  (put! :foursquare-access-token token)
+  (put! :current-page :auth-success)
+  (console/debug "State:" (clj->js @app-state)))
 
 ;; -------------------------
 ;; Initialize app
