@@ -1,11 +1,12 @@
 (ns haunting-refrain.core
   (:require-macros [cljs.core.async.macros :refer [go]])
   (:require [haunting-refrain.foursquare :as foursquare]
-              [shodan.console :as console :include-macros true]
-              [reagent.core :as reagent]
-              [secretary.core :as secretary :include-macros true]
-              [goog.events :as events]
-              [goog.history.EventType :as EventType])
+            [shodan.console :as console :include-macros true]
+            [shodan.inspection :refer [inspect]]
+            [reagent.core :as reagent]
+            [secretary.core :as secretary :include-macros true]
+            [goog.events :as events]
+            [goog.history.EventType :as EventType])
     (:import goog.History))
 
 ;; -------------------------
@@ -29,7 +30,8 @@
   [:div [:h2 (get-state :text) "Page 1"]
    [:div [:a {:href "#/page2"} "go to page 2"]]
    [:div "Token:" (get-state :foursquare-access-token)]
-   [:div [:button#redir {:on-click foursquare/redirect-to-foursquare!} "Log In"]]])
+   [:div [:button#login {:on-click foursquare/redirect-to-foursquare!} "Log In"]]
+   [:div [:button#logout {:on-click foursquare-logout!} "Log Out"]]])
 
 (defmethod page :page2 [_]
   [:div [:h2 (get-state :text) "Page 2"]
@@ -50,17 +52,25 @@
 (secretary/set-config! :prefix "#")
 
 (secretary/defroute "/" []
-  (console/debug "State:" (clj->js @app-state))
+  (inspect "State:" (clj->js @app-state))
   (put! :current-page :page1))
 
 (secretary/defroute "/page2" []
   (put! :current-page :page2))
 
 (secretary/defroute #"/foursquare-callback#access_token=([^&]+)" [token]
-  (console/debug "Got foursquare token:" token)
+  (foursquare-login! token))
+
+;; -------------------------
+;; login/logout
+(defn foursquare-login! [token]
+  (console/debug "Logged in, token:" token)
   (put! :foursquare-access-token token)
-  (put! :current-page :auth-success)
-  (console/debug "State:" (clj->js @app-state)))
+  (.replace js/window.location "#/"))
+
+(defn foursquare-logout! [token]
+  (console/debug "Logged out")
+  (put! :foursquare-access-token nil))
 
 ;; -------------------------
 ;; Initialize app
