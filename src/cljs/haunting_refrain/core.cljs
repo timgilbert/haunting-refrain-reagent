@@ -31,7 +31,8 @@
    [:div [:a {:href "#/page2"} "go to page 2"]]
    [:div "Token:" (get-state :foursquare-access-token)]
    [:div [:button#login {:on-click foursquare/redirect-to-foursquare!} "Log In"]]
-   [:div [:button#logout {:on-click foursquare-logout!} "Log Out"]]])
+   [:div [:button#logout {:on-click foursquare-logout!} "Log Out"]]
+   [:div [:button#check {:on-click #(foursquare/get-checkins! app-state (get-state :foursquare-access-token))} "Check In"]]])
 
 (defmethod page :page2 [_]
   [:div [:h2 (get-state :text) "Page 2"]

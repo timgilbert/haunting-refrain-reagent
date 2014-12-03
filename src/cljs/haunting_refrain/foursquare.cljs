@@ -1,11 +1,26 @@
 (ns haunting-refrain.foursquare
-  (:require [shodan.console :as console :include-macros true]
-            [shodan.inspection :refer [inspect]]))
+  (:require [cljs-http.client :as http]
+            [cljs.core.async :refer [<!]]
+            [shodan.console :as console :include-macros true]
+            [shodan.inspection :refer [inspect]])
+  (:require-macros [cljs.core.async.macros :refer [go]]))
+
+;; -------------------------
+;; General foursquare settings
+
+(def foursquare-api-version "20141202")
+
+(defn foursquare-api-url [endpoint token]
+  (str "https://api.foursquare.com/v2/"
+       endpoint
+       "?oauth_token=" token
+       "&v=" foursquare-api-version))
+
+;; -------------------------
+;; Login / logout
 
 ; cf https://developer.foursquare.com/overview/auth.html
 ; https://foursquare.com/developers/app/BAL2VGI3TXOWFI1TGH4O4VIHBLQ4AUC404YYSRRT5OJJEGGL
-
-;; Login / logout
 
 (def ^:private foursquare-client-id "BAL2VGI3TXOWFI1TGH4O4VIHBLQ4AUC404YYSRRT5OJJEGGL")
 
@@ -22,3 +37,14 @@
   return to redirect-uri#access_token=XYZZY"
   (set! (.-location js/window) foursquare-redirect-url))
 
+;; -------------------------
+;;
+(defn get-checkins! [app-state token]
+  "Call foursquare's checkin endpoint. When it returns, update :checkins in
+  app-state with an ednified version of the result."
+  (go (let [url (foursquare-api-url "users/self/checkins" token)
+            response (<! (http/get url {:with-credentials? false}))]
+        (when (:success response))
+        (inspect response)
+        (console/debug "response:" response)
+        )))

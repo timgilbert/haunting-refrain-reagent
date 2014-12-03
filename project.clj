@@ -1,5 +1,5 @@
 (defproject haunting-refrain "0.1.0-SNAPSHOT"
-  :description "FIXME: write description"
+  :description "ClojureScript project to generate song playlists from foursquare checkin data"
   :url "http://example.com/FIXME"
   :license {:name "Eclipse Public License"
             :url "http://www.eclipse.org/legal/epl-v10.html"}
@@ -24,6 +24,7 @@
                  [figwheel "0.1.5-SNAPSHOT"]
                  [prone "0.6.0"]
                  ;; local stuff
+                 [org.clojure/core.async "0.1.346.0-17112a-alpha"]
                  [cljs-http "0.1.21"]
                  [kioo "0.4.0"]
                  [shodan "0.4.1"]]
