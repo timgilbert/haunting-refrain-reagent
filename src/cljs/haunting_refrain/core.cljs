@@ -29,11 +29,12 @@
 (defn foursquare-login! [token]
   (console/debug "Logged in, token:" token)
   (put! :foursquare-access-token token)
-  (.replace js/window.location "#/"))
+  (.replace js/window.location "#/splash"))
 
 (defn foursquare-logout! [token]
   (console/debug "Logged out")
-  (put! :foursquare-access-token nil))
+  (put! :foursquare-access-token nil)
+  (.replace js/window.location "#/"))
 
 ;; -------------------------
 ;; Routes
@@ -55,8 +56,13 @@
 ;; -------------------------
 ;; kioo templates
 
+(defn onclick [& args]
+  (console/log "click!")
+  (console/log args))
+
 (defsnippet login-button "templates/splash.html" [:.login] []
-  {[:button] (listen :onclick #(console/log "click" %))})
+  {[:button] (do-> (content "This is the button")
+                   (listen :on-click foursquare/redirect-to-foursquare!))})
 
 (deftemplate splash "templates/splash.html" []
   {[:.login] (substitute [login-button])})
