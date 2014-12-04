@@ -1,14 +1,16 @@
 (ns haunting-refrain.core
-  (:require-macros [cljs.core.async.macros :refer [go]])
   (:require [haunting-refrain.foursquare :as foursquare]
             [shodan.console :as console :include-macros true]
             [shodan.inspection :refer [inspect]]
             [reagent.core :as reagent]
+            [kioo.reagent :refer [content set-attr do-> substitute listen]]
             [secretary.core :as secretary :include-macros true]
             [goog.events :as events]
             [json-html.core :as json-html]
             [goog.history.EventType :as EventType])
-    (:import goog.History))
+  (:require-macros [cljs.core.async.macros :refer [go]]
+                   [kioo.reagent :refer [defsnippet deftemplate]])
+  (:import goog.History))
 
 ;; -------------------------
 ;; State
@@ -42,10 +44,22 @@
   (put! :current-page :page1))
 
 (secretary/defroute "/page2" []
-  (put! :current-page :page2))
+                    (put! :current-page :page2))
+
+(secretary/defroute "/splash" []
+                    (put! :current-page :splash))
 
 (secretary/defroute #"/foursquare-callback#access_token=([^&]+)" [token]
   (foursquare-login! token))
+
+;; -------------------------
+;; kioo templates
+
+(defsnippet login-button "templates/splash.html" [:.login] []
+  {[:button] (listen :onclick #(console/log "click" %))})
+
+(deftemplate splash "templates/splash.html" []
+  {[:.login] (substitute [login-button])})
 
 ;; -------------------------
 ;; Views
@@ -54,13 +68,14 @@
 
 (defmethod page :page1 [_]
   [:div [:h2 (get-state :text) "Page 1"]
-   [:div [:a {:href "#/page2"} "go to page 2"]]
-   [:div "Token:" (get-state :foursquare-access-token)]
-   [:div [:button#login {:on-click foursquare/redirect-to-foursquare!} "Log In"]]
-   [:div [:button#logout {:on-click foursquare-logout!} "Log Out"]]
-   [:div [:button#check {:on-click #(foursquare/get-checkins! app-state (get-state :foursquare-access-token))} "Check In"]]
-   [:div (json-html/edn->hiccup @app-state)]
-   ])
+  [:div [:a {:href "#/splash"} "go to splash"]]
+  [:div [:a {:href "#/page2"} "go to page 2"]]
+  [:div "Token:" (get-state :foursquare-access-token)]
+  [:div [:button#login {:on-click foursquare/redirect-to-foursquare!} "Log In"]]
+  [:div [:button#logout {:on-click foursquare-logout!} "Log Out"]]
+  [:div [:button#check {:on-click #(foursquare/get-checkins! app-state (get-state :foursquare-access-token))} "Check In"]]
+  [:div (json-html/edn->hiccup @app-state)]
+  ])
 
 (defmethod page :page2 [_]
   [:div [:h2 (get-state :text) "Page 2"]
@@ -75,6 +90,10 @@
 
 (defn main-page []
   [:div [page (get-state :current-page)]])
+
+(defmethod page :splash [_]
+  (splash))
+
 
 ;; -------------------------
 ;; Initialize app
