@@ -44,7 +44,10 @@
   app-state with an ednified version of the result."
   (go (let [url (foursquare-api-url "users/self/checkins" token)
             response (<! (http/get url {:with-credentials? false}))]
-        (when (:success response))
+        (when (:success response)
+          (let [checkins (get-in response [:body :response :checkins
+                                           :items])]
+                (swap! app-state assoc :checkins checkins)))
         (inspect response)
         (console/debug "response:" response)
         )))

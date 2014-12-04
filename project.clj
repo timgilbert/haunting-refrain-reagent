@@ -27,6 +27,7 @@
                  [org.clojure/core.async "0.1.346.0-17112a-alpha"]
                  [cljs-http "0.1.21"]
                  [kioo "0.4.0"]
+                 [json-html "0.2.6"]
                  [shodan "0.4.1"]]
 
   :plugins [

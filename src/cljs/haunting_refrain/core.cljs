@@ -6,14 +6,15 @@
             [reagent.core :as reagent]
             [secretary.core :as secretary :include-macros true]
             [goog.events :as events]
+            [json-html.core :as json-html]
             [goog.history.EventType :as EventType])
     (:import goog.History))
 
 ;; -------------------------
 ;; State
 (defonce app-state
-  (reagent/atom {:text "Hello, this is: "
-                 :foursquare-access-token nil}))
+  (reagent/atom {:foursquare-access-token nil
+                 :checkins []}))
 
 (defn get-state [k & [default]]
   (clojure.core/get @app-state k default))
@@ -22,31 +23,15 @@
   (swap! app-state assoc k v))
 
 ;; -------------------------
-;; Views
+;; login/logout
+(defn foursquare-login! [token]
+  (console/debug "Logged in, token:" token)
+  (put! :foursquare-access-token token)
+  (.replace js/window.location "#/"))
 
-(defmulti page identity)
-
-(defmethod page :page1 [_]
-  [:div [:h2 (get-state :text) "Page 1"]
-   [:div [:a {:href "#/page2"} "go to page 2"]]
-   [:div "Token:" (get-state :foursquare-access-token)]
-   [:div [:button#login {:on-click foursquare/redirect-to-foursquare!} "Log In"]]
-   [:div [:button#logout {:on-click foursquare-logout!} "Log Out"]]
-   [:div [:button#check {:on-click #(foursquare/get-checkins! app-state (get-state :foursquare-access-token))} "Check In"]]])
-
-(defmethod page :page2 [_]
-  [:div [:h2 (get-state :text) "Page 2"]
-   [:div [:a {:href "#/"} "go to page 1"]]])
-
-(defmethod page :auth-success [_]
-  [:div [:h2 (get-state :text) "Success!"]
-   [:div [:a {:href "#/"} "go to page 1"]]])
-
-(defmethod page :default [_]
-  [:div "Invalid/Unknown route"])
-
-(defn main-page []
-  [:div [page (get-state :current-page)]])
+(defn foursquare-logout! [token]
+  (console/debug "Logged out")
+  (put! :foursquare-access-token nil))
 
 ;; -------------------------
 ;; Routes
@@ -63,15 +48,33 @@
   (foursquare-login! token))
 
 ;; -------------------------
-;; login/logout
-(defn foursquare-login! [token]
-  (console/debug "Logged in, token:" token)
-  (put! :foursquare-access-token token)
-  (.replace js/window.location "#/"))
+;; Views
 
-(defn foursquare-logout! [token]
-  (console/debug "Logged out")
-  (put! :foursquare-access-token nil))
+(defmulti page identity)
+
+(defmethod page :page1 [_]
+  [:div [:h2 (get-state :text) "Page 1"]
+   [:div [:a {:href "#/page2"} "go to page 2"]]
+   [:div "Token:" (get-state :foursquare-access-token)]
+   [:div [:button#login {:on-click foursquare/redirect-to-foursquare!} "Log In"]]
+   [:div [:button#logout {:on-click foursquare-logout!} "Log Out"]]
+   [:div [:button#check {:on-click #(foursquare/get-checkins! app-state (get-state :foursquare-access-token))} "Check In"]]
+   [:div (json-html/edn->hiccup @app-state)]
+   ])
+
+(defmethod page :page2 [_]
+  [:div [:h2 (get-state :text) "Page 2"]
+   [:div [:a {:href "#/"} "go to page 1"]]])
+
+(defmethod page :auth-success [_]
+  [:div [:h2 (get-state :text) "Success!"]
+   [:div [:a {:href "#/"} "go to page 1"]]])
+
+(defmethod page :default [_]
+  [:div "Invalid/Unknown route"])
+
+(defn main-page []
+  [:div [page (get-state :current-page)]])
 
 ;; -------------------------
 ;; Initialize app
