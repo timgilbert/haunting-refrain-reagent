@@ -5,7 +5,7 @@
             [kioo.reagent :refer [content set-attr do-> substitute listen]]
             [shodan.console :as console :include-macros true]
             [shodan.inspection :refer [inspect]])
-  (:require-macros [cljs.core.async.macros :refer [go]]))
+  (:require-macros [kioo.reagent :refer [defsnippet deftemplate]]))
 
 ;; -------------------------
 ;; kioo templates

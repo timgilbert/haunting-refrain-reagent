@@ -24,7 +24,8 @@
                  [reagent-utils "0.1.3"]
                  [secretary "1.2.1"]
                  [cljs-http "0.1.27"]
-                 [kioo "0.4.0"]
+                 [kioo "0.4.1-SNAPSHOT" :exclusions [org.clojure/clojure]] ; need this for compat with reagent 0.5.0
+                 [re-frame "0.2.0"]
                  [json-html "0.2.8"]
                  [shodan "0.4.1"]]
 
