@@ -9,7 +9,7 @@
 
 ; http://squirrel.pl/blog/2014/05/01/navigation-and-routing-with-om-and-secretary/
 
-(defn init! [app-state]
+(defn init! []
   (secretary/set-config! :prefix "#")
 
   (let [h (History.)]

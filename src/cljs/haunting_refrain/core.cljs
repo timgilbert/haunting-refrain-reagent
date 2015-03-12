@@ -25,6 +25,6 @@
 ;;; Main
 
 (defn main []
-  (routing/init! nil)
+  (routing/init!)
   (handlers/init! initial-state)
-  (reagent/render-component [views/splash] (.-body js/document)))
+  (reagent/render-component [views/shell] (.-body js/document)))
