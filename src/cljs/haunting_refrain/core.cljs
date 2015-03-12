@@ -45,10 +45,10 @@
   (put! :current-page :page1))
 
 (secretary/defroute "/page2" []
-                    (put! :current-page :page2))
+  (put! :current-page :page2))
 
 (secretary/defroute "/splash" []
-                    (put! :current-page :splash))
+  (put! :current-page :splash))
 
 (secretary/defroute #"/foursquare-callback#access_token=([^&]+)" [token]
   (foursquare-login! token))
@@ -61,10 +61,12 @@
   (console/log args))
 
 (defsnippet login-button "templates/splash.html" [:.login] []
-  {[:button] (do-> (content "This is the button")
-                   (listen :on-click foursquare/redirect-to-foursquare!))})
+  {[:button] (listen :on-click foursquare/redirect-to-foursquare!)})
 
 (deftemplate splash "templates/splash.html" []
+  {[:.login] (substitute [login-button])})
+
+(deftemplate playlist "templates/playlist.html" []
   {[:.login] (substitute [login-button])})
 
 ;; -------------------------

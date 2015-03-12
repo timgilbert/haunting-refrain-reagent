@@ -5,3 +5,4 @@ foursquare checkin data.
 
 * Store token in localstorage
 * Also cache api results in there, both with low ttl
+
