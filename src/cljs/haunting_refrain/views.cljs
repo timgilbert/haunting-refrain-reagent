@@ -1,6 +1,7 @@
 (ns haunting-refrain.views
   (:require [haunting-refrain.foursquare :as foursquare]
             [cljs.core.async :refer [put! chan <!]]
+            [re-frame.core :refer [subscribe]]
             [kioo.core :refer [handle-wrapper]]
             [kioo.reagent :refer [content set-attr do-> substitute listen]]
             [shodan.console :as console :include-macros true]
@@ -22,16 +23,5 @@
 
 (deftemplate playlist "templates/playlist.html" []
   {[:.login] (substitute [login-button])})
-
-;; -------------------------
-;; Views
-
-(defmulti page identity)
-
-(defn main-page []
-  [:div [page (get-state :current-page)]])
-
-(defmethod page :splash [_]
-  (splash))
 
 
