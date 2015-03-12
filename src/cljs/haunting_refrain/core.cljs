@@ -27,4 +27,4 @@
 (defn main []
   (routing/init! nil)
   (handlers/init! initial-state)
-  (reagent/render-component [views/main-page] (.-body js/document)))
+  (reagent/render-component [views/splash] (.-body js/document)))
