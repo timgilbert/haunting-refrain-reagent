@@ -1,67 +1,66 @@
 (defproject haunting-refrain "0.1.0-SNAPSHOT"
-  :description "ClojureScript project to generate song playlists from foursquare checkin data"
-  :url "http://example.com/FIXME"
-  :license {:name "Eclipse Public License"
-            :url "http://www.eclipse.org/legal/epl-v10.html"}
+  :description "Playlist generator in re-frame"
+  :url "https://github.com/timgilbert/haunting-refrain-om"
+  :license {:name "MIT"
+            :url "https://github.com/timgilbert/haunting-refrain/MIT-LICENSE.txt"}
 
-  :source-paths ["src/clj" "src/cljs"]
+  :source-paths ["src/clj"]
+  :repl-options {:timeout 200000} ;; Defaults to 30000 (30 seconds)
 
-  :dependencies [;; lein new reagent
-                 [org.clojure/clojure "1.6.0"]
-                 [reagent "0.4.3"]
-                 [reagent-utils "0.1.0"]
-                 [secretary "1.2.1"]
-                 [org.clojure/clojurescript "0.0-2371" :scope "provided"]
-                 [com.cemerick/piggieback "0.1.3"]
-                 [weasel "0.4.2"]
+  :test-paths ["spec/clj"]
+
+  :dependencies [[org.clojure/clojure "1.6.0"]
+                 [org.clojure/clojurescript "0.0-2511" :scope "provided"]
                  [ring "1.3.2"]
-                 [ring/ring-defaults "0.1.2"]
-                 [prone "0.6.0"]
-                 [compojure "1.2.2"]
-                 [selmer "0.7.6"]
+                 [ring/ring-defaults "0.1.4"]
+                 [prone "0.8.1"]
+                 [compojure "1.3.2"]
+                 [selmer "0.8.1"]
                  [environ "1.0.0"]
-                 [leiningen "2.5.0"]
-                 [figwheel "0.1.5-SNAPSHOT"]
-                 [prone "0.6.0"]
+                 [prone "0.8.1"]
+                 [http-kit "2.1.19"]
                  ;; local stuff
-                 [org.clojure/core.async "0.1.346.0-17112a-alpha"]
-                 [cljs-http "0.1.21"]
+                 [reagent "0.5.0"]
+                 [reagent-utils "0.1.3"]
+                 [secretary "1.2.1"]
+                 [cljs-http "0.1.27"]
                  [kioo "0.4.0"]
-                 [json-html "0.2.6"]
+                 [json-html "0.2.8"]
                  [shodan "0.4.1"]]
 
-  :plugins [
-            [lein-cljsbuild "1.0.3"]
+  :plugins [[lein-cljsbuild "1.0.3"]
             [lein-environ "1.0.0"]
-            [lein-ring "0.8.13"]
+            [lein-less "1.7.2"]
             [lein-asset-minifier "0.2.0"]]
-
-  :ring {:handler haunting-refrain.handler/app}
 
   :min-lein-version "2.5.0"
 
   :uberjar-name "haunting-refrain.jar"
 
-  :minify-assets
-  {:assets
-    {"resources/public/css/site.min.css" "resources/public/css/site.css"}}
+  :less {:source-paths ["src/less"]
+         :target-path "resources/public/css"}
 
   :cljsbuild {:builds {:app {:source-paths ["src/cljs"]
                              :compiler {:output-to     "resources/public/js/app.js"
                                         :output-dir    "resources/public/js/out"
                                         :source-map    "resources/public/js/out.js.map"
-                                        :externs       ["react/externs/react.js"]
+                                        :preamble      ["react/react.min.js"]
                                         :optimizations :none
                                         :pretty-print  true}}}}
 
-  :profiles {:dev {:repl-options {:init-ns haunting-refrain.handler
-                                  :nrepl-middleware [cemerick.piggieback/wrap-cljs-repl]}
+  :profiles {:dev {:repl-options {:init-ns haunting-refrain.server
+                   :nrepl-middleware [cemerick.piggieback/wrap-cljs-repl]}
 
-                   :dependencies [[ring-mock "0.1.5"]
-                                  [ring/ring-devel "1.3.2"]
-                                  [pjstadig/humane-test-output "0.6.0"]]
+                   :source-paths ["env/dev/clj"]
+                   :test-paths ["test/clj"]
 
-                   :plugins [[lein-figwheel "0.1.4-SNAPSHOT"]]
+                   :dependencies [[figwheel "0.2.1-SNAPSHOT"]
+                                  [figwheel-sidecar "0.2.1-SNAPSHOT"]
+                                  [com.cemerick/piggieback "0.1.3"]
+                                  [weasel "0.4.2"]
+                                  [pjstadig/humane-test-output "0.7.0"]]
+
+                   :plugins [[lein-figwheel "0.2.1-SNAPSHOT"]]
 
                    :injections [(require 'pjstadig.humane-test-output)
                                 (pjstadig.humane-test-output/activate!)]
@@ -70,21 +69,26 @@
                               :server-port 3449
                               :css-dirs ["resources/public/css"]}
 
-                   :env {:dev? true}
+                   :env {:is-dev true}
 
-                   :cljsbuild {:builds {:app {:source-paths ["env/dev/cljs"]}}}}
+                   :cljsbuild {:test-commands { "test" ["phantomjs" "env/test/js/unit-test.js" "env/test/unit-test.html"] }
+                               :builds {:app {:source-paths ["env/dev/cljs"]}
+                                        :test {:source-paths ["src/cljs" "test/cljs"]
+                                               :compiler {:output-to     "resources/public/js/app_test.js"
+                                                          :output-dir    "resources/public/js/test"
+                                                          :source-map    "resources/public/js/test.js.map"
+                                                          :preamble      ["react/react.min.js"]
+                                                          :optimizations :whitespace
+                                                          :pretty-print  false}}}}}
 
-             :uberjar {:hooks [leiningen.cljsbuild minify-assets.plugin/hooks]
+
+             :uberjar {:source-paths ["env/prod/clj"]
+                       :hooks [leiningen.cljsbuild leiningen.less]
                        :env {:production true}
-                       :aot :all
                        :omit-source true
-                       :cljsbuild {:jar true
-                                   :builds {:app
-                                             {:source-paths ["env/prod/cljs"]
-                                              :compiler
-                                              {:optimizations :advanced
-                                               :pretty-print false}}}}}
-
-             :production {:ring {:open-browser? false
-                                 :stacktraces?  false
-                                 :auto-reload?  false}}})
+                       :aot :all
+                       :cljsbuild {:builds {:app
+                                            {:source-paths ["env/prod/cljs"]
+                                             :compiler
+                                             {:optimizations :advanced
+                                              :pretty-print false}}}}}})

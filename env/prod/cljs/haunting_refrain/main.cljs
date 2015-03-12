@@ -1,4 +1,4 @@
-(ns haunting-refrain.prod
+(ns haunting-refrain.main
   (:require [haunting-refrain.core :as core]))
 
-(core/init!)
+(core/main)
