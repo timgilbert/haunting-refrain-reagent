@@ -22,6 +22,17 @@ synopsis is:
 
 ### Todo
 
+Figure out routing, should it come from secretary or what?
+
+* Use case: user arrives on splash page, redirects to oauth source
+* Lands on oauth callback page
+* At this point, we should figure out what page they are on, display it
+  and change the URL token
+* But should the token change drive the app-db update, or vice versa?
+* From an SPA perspective, the callback is our landing page
+
+Etc
+
 * Store token in localstorage
 * Also cache api results in there, both with low ttl
 * Use [this cljs fork](https://github.com/quile/component-cljs) of `stuartsierra/component` 
