@@ -19,7 +19,7 @@
 
 (defn foursquare-token-handler [db [_ token]]
   (assoc db :foursquare-token token)
-  (dispatch [:goto-page :playlist])
+  (dispatch [:go-to-page :playlist])
   db)
 
 ;; Set up all event handlers and fire off initial event
@@ -40,4 +40,5 @@
     :foursquare-got-token
     (debug foursquare-token-handler))
 
-  (dispatch [:initialize initial-state]))
+  ;(dispatch [:initialize initial-state])
+  );(dispatch [:go-to-page :splash]))

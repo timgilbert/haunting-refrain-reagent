@@ -9,6 +9,10 @@
 
 ; http://squirrel.pl/blog/2014/05/01/navigation-and-routing-with-om-and-secretary/
 
+(defn go-home []
+  (let [h (History.)]
+    (.replaceToken h "/")))
+
 (defn init! []
   (secretary/set-config! :prefix "#")
 
@@ -17,11 +21,11 @@
     (doto h (.setEnabled true)))
 
   (secretary/defroute "/" []
-    (console/log "hmm, /")
+    (console/log "secretary: /")
     (dispatch [:go-to-page :splash]))
 
   (secretary/defroute "/playlist" []
-    (console/log "hmm, /playlist")
+    (console/log "secretary: /playlist")
     (dispatch [:go-to-page :playlist]))
 
   (secretary/defroute #"/foursquare-callback#access_token=([^&]+)" [token]
