@@ -10,19 +10,19 @@
   :test-paths ["spec/clj"]
 
   :dependencies [[org.clojure/clojure "1.6.0"]
-                 [org.clojure/clojurescript "0.0-2511" :scope "provided"]
+                 [org.clojure/clojurescript "0.0-3123" :scope "provided"]
                  [ring "1.3.2"]
                  [ring/ring-defaults "0.1.4"]
                  [prone "0.8.1"]
                  [compojure "1.3.2"]
-                 [selmer "0.8.1"]
+                 [selmer "0.8.2"]
                  [environ "1.0.0"]
                  [prone "0.8.1"]
                  [http-kit "2.1.19"]
                  ;; local stuff
                  [reagent "0.5.0"]
-                 [reagent-utils "0.1.3"]
-                 [secretary "1.2.1"]
+                 [reagent-utils "0.1.4"]
+                 [secretary "1.2.2"]
                  [cljs-http "0.1.27"]
                  [kioo "0.4.1-SNAPSHOT" :exclusions [org.clojure/clojure]] ; need this for compat with reagent 0.5.0
                  [re-frame "0.2.0"]
@@ -55,10 +55,10 @@
                    :source-paths ["env/dev/clj"]
                    :test-paths ["test/clj"]
 
-                   :dependencies [[figwheel "0.2.1-SNAPSHOT"]
-                                  [figwheel-sidecar "0.2.1-SNAPSHOT"]
-                                  [com.cemerick/piggieback "0.1.3"]
-                                  [weasel "0.4.2"]
+                   :dependencies [[figwheel "0.2.5"]
+                                  [figwheel-sidecar "0.2.5"]
+                                  [com.cemerick/piggieback "0.1.5"]
+                                  [weasel "0.6.0"]
                                   [pjstadig/humane-test-output "0.7.0"]]
 
                    :plugins [[lein-figwheel "0.2.1-SNAPSHOT"]]
