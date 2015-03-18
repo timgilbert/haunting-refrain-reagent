@@ -20,11 +20,14 @@
                           {:url "/playlist" :name "Playlist"}}}
    :foursquare {:token nil}})
 
+;; Set of localstorage keyword to (get-in) index into app-state map
+(defonce local-storage-keys
+  {:foursquare-token [:foursquare :token]})
 
 ;;; ----------------------------------------------------------------------
 ;;; Main
 
 (defn main []
   (routing/init!)
-  (handlers/init! initial-state)
+  (handlers/init! initial-state local-storage-keys)
   (reagent/render-component [views/shell] (.-body js/document)))

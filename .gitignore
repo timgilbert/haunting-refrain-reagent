@@ -12,3 +12,4 @@ pom.xml.asc
 /.repl
 .idea
 *.iml
+.cljs_rhino_repl
