@@ -16,11 +16,25 @@
   (console/log "click!")
   (console/log args))
 
-(defsnippet login-button "templates/splash.html" [:.login] []
-  {[:button] (listen :onClick #(dispatch [:redirect-to-foursquare]))})
+(defsnippet foursquare-logged-out "templates/splash.html" [:.foursquare-logged-out] []
+  {[:button] (listen :on-click #(dispatch [:open-login-window "#/foursquare-login"]))})
+
+(defsnippet foursquare-logged-in "templates/splash.html" [:.foursquare-logged-in] []
+  {[:button] (listen :on-click #(dispatch [:foursquare-logout]))})
+
+(defsnippet date-selector "templates/splash.html" [:.date-selector] []
+  {[:input] (listen :on-click #(console/log "hmm"))})
 
 (deftemplate splash "templates/splash.html" []
-  {[:.login] (substitute [login-button])})
+  {[:.foursquare-logged-in]  (substitute (foursquare-logged-in))
+   [:.foursquare-logged-out] (substitute (foursquare-logged-out))})
+
+(defsnippet date-selector "templates/splash.html" [:.date-selector] []
+  {[:input] (listen :on-click #(console/log "hmm"))})
+
+(deftemplate foursquare-login "templates/foursquare-login.html" []
+  {[:button.foursquare-login] (listen :on-click #(console/log "hmm"))
+   [:a.cancel] (listen :on-click #(dispatch [:close-window]))})
 
 (deftemplate playlist "templates/playlist.html" []
   {})

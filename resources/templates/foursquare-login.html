@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<!-- note that only the <body> tag is used with (deftemplate), everything else is discarded -->
+
+<head>
+  <title>foursquare-login.html (kioo template)</title>
+  <link href="css/style.css" rel="stylesheet" type="text/css"/>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+</head>
+
+<body>
+<div class="container-fluid">
+
+<header>
+  <h1>Foursquare Login</h1>
+</header>
+
+<section class="button">
+  <p>Hitting this button will redirect you to foursquare, where you can log in
+  and then grant permission to this app to access your checkin history.</p>
+  <p>Once that happens, this window will close.</p>
+
+  <div class="login">
+    <button class="foursquare-login">Go to Foursquare</button>
+  </div>
+
+  <a class="cancel" href="">Cancel</a>
+</section>
+
+<script src="/js/app.js" type="text/javascript"></script>
+<script src="http://code.jquery.com/jquery.js" type="text/javascript"></script>
+<script src="/js/bootstrap.min.js" type="text/javascript"></script>
+
+</div>
+</body>
+</html>

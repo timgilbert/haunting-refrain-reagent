@@ -1,6 +1,7 @@
 (ns haunting-refrain.handlers
   (:require [haunting-refrain.foursquare :as foursquare]
             [haunting-refrain.local-storage :as local-storage]
+            [haunting-refrain.routing :as routing]
             ;[environ.core :refer [env]]
             [reagent.core :as reagent :refer [atom]]
             [re-frame.core :refer [register-handler debug
@@ -12,9 +13,12 @@
 ; cribbing from https://github.com/Day8/re-frame/blob/master/examples/simple/src/simpleexample/core.cljs
 
 (defn init-handler [db [_ initial-state local-storage-keys]]
-  (inspect initial-state)
-  (inspect local-storage-keys)
   (merge db initial-state (local-storage/retrieve local-storage-keys)))
+
+(defn open-login-handler [db [_ url]]
+  (let [features "height=400,width=500,menubar=no,location=yes,resizable=yes,scrollbars=no,status=yes"]
+    (.open js/window url "loginWindow" features)
+    db))
 
 (defn goto-handler [db [_ new-page]]
   (assoc db :current-page new-page))
@@ -23,9 +27,10 @@
   (foursquare/redirect-to-foursquare!))
 
 (defn foursquare-token-handler [db [_ token]]
-  (assoc db :foursquare-token token)
+  "Called when the page starts on a foursquare callback URL."
+  (routing/go-home!)
   (dispatch [:go-to-page :playlist])
-  db)
+  (assoc-in db [:foursquare :token] token))
 
 (defn localstorage-get-foursquare 
   "Called when a value for the foursquare toekn is found in localstorage"
@@ -43,6 +48,11 @@
     :go-to-page
     debug
     goto-handler)
+
+  (register-handler
+    :open-login-window
+    debug
+    open-login-handler)
 
   (register-handler
     :redirect-to-foursquare

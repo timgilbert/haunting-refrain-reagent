@@ -16,19 +16,45 @@
   <h1>Haunting Refrain</h1>
 </header>
 
-<section>
+<section class="foursquare-logged-out">
   <p>Haunting refrain builds a playlist from your foursquare history.</p>
   <p>To get started, you need to sign in to foursquare.</p>
 
-  <div class="login" id="logindiv">
+  <div class="login">
     <button>Log In</button>
+  </div>
+</section>
+
+<section class="foursquare-logged-in">
+  <p>You are to signed in to foursquare.</p>
+
+  <div class="logout">
+    <button>Log Out</button>
+  </div>
+</section>
+
+<section class="date-selector">
+  <p>To get started, choose a start and end date.</p>
+
+  <div class="start">
+    <label for="startdate">Start</label>
+    <input type="text" id="startdate"/>
+  </div>
+
+  <div class="end">
+    <label for="enddate">End</label>
+    <input type="text" id="enddate"/>
+  </div>
+
+  <div class="go">
+    <button>Go!</button>
   </div>
 
 </section>
 
-  <script src="/js/app.js" type="text/javascript"></script>
-  <script src="http://code.jquery.com/jquery.js" type="text/javascript"></script>
-  <script src="/js/bootstrap.min.js" type="text/javascript"></script>
+<script src="/js/app.js" type="text/javascript"></script>
+<script src="http://code.jquery.com/jquery.js" type="text/javascript"></script>
+<script src="/js/bootstrap.min.js" type="text/javascript"></script>
 
 </div>
 </body>

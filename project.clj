@@ -28,7 +28,10 @@
                  [re-frame "0.2.0"]
                  [json-html "0.2.8"]
                  [shodan "0.4.1"]
-                 [hodgepodge "0.1.3"]]
+                 [hodgepodge "0.1.3"]
+                 [cljsjs/moment "2.9.0-0"]
+                 [cljsjs/pikaday "1.2.0-3"]
+                 [com.domkm/silk "0.0.4"]]
 
   :plugins [[lein-cljsbuild "1.0.3"]
             [lein-environ "1.0.0"]
