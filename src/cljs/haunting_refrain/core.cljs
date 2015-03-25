@@ -12,7 +12,7 @@
 ;;; Initial app state
 
 (defonce initial-state 
-  {:navigation {:current-page :splash
+  {:navigation {:current-page nil
                 :states {:splash 
                           {:url "/" :name "Splash"}
                          :foursquare-login 
@@ -31,7 +31,7 @@
 ;;; Main
 
 (defn main []
-  (routing/init!)
   (local-storage/init!)
   (handlers/init! initial-state local-storage-keys)
+  (routing/init!)
   (reagent/render-component [views/shell] (.-body js/document)))

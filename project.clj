@@ -10,7 +10,7 @@
   :test-paths ["spec/clj"]
 
   :dependencies [[org.clojure/clojure "1.6.0"]
-                 [org.clojure/clojurescript "0.0-3123" :scope "provided"]
+                 [org.clojure/clojurescript "0.0-3153" :scope "provided"]
                  [ring "1.3.2"]
                  [ring/ring-defaults "0.1.4"]
                  [prone "0.8.1"]
@@ -22,15 +22,16 @@
                  ;; local stuff
                  [reagent "0.5.0"]
                  [reagent-utils "0.1.4"]
-                 [secretary "1.2.2"]
-                 [cljs-http "0.1.27"]
+                 [cljs-http "0.1.28"]
                  [kioo "0.4.1-SNAPSHOT" :exclusions [org.clojure/clojure]] ; need this for compat with reagent 0.5.0
                  [re-frame "0.2.0"]
                  [json-html "0.2.8"]
                  [shodan "0.4.1"]
                  [hodgepodge "0.1.3"]
                  [cljsjs/moment "2.9.0-0"]
-                 [cljsjs/pikaday "1.2.0-3"]
+                 [cljsjs/pikaday "1.3.2-0"]
+                 [secretary "1.2.2"]
+                 [bidi "1.18.9"]
                  [com.domkm/silk "0.0.4"]]
 
   :plugins [[lein-cljsbuild "1.0.3"]

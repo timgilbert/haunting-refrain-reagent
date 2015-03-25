@@ -12,9 +12,9 @@
 ;; -------------------------
 ;; kioo templates
 
-(defn onclick [& args]
+(defn onclick [evt]
   (console/log "click!")
-  (console/log args))
+  (console/log evt))
 
 (defsnippet foursquare-logged-out "templates/splash.html" [:.foursquare-logged-out] []
   {[:button] (listen :on-click #(dispatch [:open-login-window "#/foursquare-login"]))})

@@ -2,6 +2,8 @@
   (:require [shodan.console :as console :include-macros true]
             [shodan.inspection :refer [inspect]]
             [secretary.core :as secretary :include-macros true]
+            [domkm.silk :as silk]
+            [bidi.bidi :as bidi]
             [goog.events :as events]
             [goog.history.EventType :as EventType]
             [re-frame.core :refer [dispatch]])
@@ -13,7 +15,15 @@
   (let [h (History.)]
     (.replaceToken h "/")))
 
+(def skr
+  (silk/routes {:splash [[]]
+                :playlist [["playlist"]]
+                :foursquare [[(silk/regex :token #"/foursquare-callback#access_token=([^&]+)")]]}))
+
 (defn init! []
+  )
+
+(defn secretary-init! []
   (secretary/set-config! :prefix "#")
 
   (let [h (History.)]
