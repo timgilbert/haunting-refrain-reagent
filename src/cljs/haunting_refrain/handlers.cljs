@@ -15,6 +15,47 @@
 (defn init-handler [db [_ initial-state local-storage-keys]]
   (merge db initial-state (local-storage/retrieve local-storage-keys)))
 
+(defn- url-to-page [[page-name {:keys [url]}]]
+  [url page-name])
+
+(defn- current-page-url! []
+  (let [hash (.. js/document -location -hash)]
+    (subs hash 1)))
+
+(defn redirect-home! [db]
+  "Set the browser's URL to / and return the DB with the splash page active"
+  (let [history (.-history js/window)]
+    (.replaceState history "" "" "#/")
+    (assoc-in db [:navigation :current-page] :splash)))
+
+(defn save-foursquare-token [db token]
+  ; save the token to local storage
+  (local-storage/save-foursquare-token! token)
+  ; Redirect the user and replace the URL
+  (redirect-home! (assoc-in db [:foursquare :token] token)))
+
+(defn url-route-handler [db _]
+  "This handler gets called when the page first loads. It is intended to look at the URL 
+  the user is on and restore them to the proper state if necessary. This handler will be 
+  called after localStorage has been retrieved."
+  (let [path (current-page-url!)
+        urlmap (into {} (map url-to-page (get-in db [:navigation :states])))
+        selected-page (get urlmap path)
+        foursquare-match (re-find routing/foursquare-regex path)]
+    (console/log "path:" path "selected-page:" (str selected-page))
+    ;(inspect urlmap "urlmap")
+    (cond
+      (= (count foursquare-match) 2) 
+        (save-foursquare-token db (second foursquare-match))
+      selected-page
+        (assoc-in db [:navigation :current-page] selected-page)
+      (= path "")
+        (redirect-home! db)
+      :else
+        (do 
+          (console/warn "Can't figure out what page maps to" path "- redirecting home")
+          (redirect-home! db)))))
+
 (defn open-login-handler [db [_ url]]
   (let [features "height=400,width=500,menubar=no,location=yes,resizable=yes,scrollbars=no,status=yes"]
     (.open js/window url "loginWindow" features)
@@ -37,7 +78,7 @@
   [db [_ token]]
   (assoc-in db [:foursquare :token] token))
 
-;; Set up all event handlers and fire off initial event
+;; Set up all event handlers and fire off initial events
 (defn init! [initial-state local-storage-keys]
   (register-handler
     :initialize
@@ -48,6 +89,11 @@
     :go-to-page
     debug
     goto-handler)
+
+  (register-handler
+    :route
+    debug
+    url-route-handler)
 
   (register-handler
     :open-login-window
@@ -66,5 +112,7 @@
 
   ; Fire off the first event
   (dispatch [:initialize initial-state local-storage-keys])
+  ; Set page state from URL
+  (dispatch [:route])
 
 )

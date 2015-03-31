@@ -11,6 +11,8 @@
 
 ; http://squirrel.pl/blog/2014/05/01/navigation-and-routing-with-om-and-secretary/
 
+(def foursquare-regex #"foursquare-callback#access_token=([^&]+)")
+
 (defn go-home! []
   (let [h (History.)]
     (.replaceToken h "/")))
@@ -18,7 +20,7 @@
 (def skr
   (silk/routes {:splash [[]]
                 :playlist [["playlist"]]
-                :foursquare [[(silk/regex :token #"/foursquare-callback#access_token=([^&]+)")]]}))
+                :foursquare [[(silk/regex :token foursquare-regex)]]}))
 
 (defn init! []
   )
@@ -42,6 +44,6 @@
     (console/log "secretary: /playlist")
     (dispatch [:go-to-page :playlist]))
 
-  (secretary/defroute #"/foursquare-callback#access_token=([^&]+)" [token]
+  #_(secretary/defroute foursquare-regex [token]
     (console/log "got token from foursquare:" token)
     (dispatch [:foursquare-save-token token])))

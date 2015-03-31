@@ -19,6 +19,9 @@
     ;(inspect (apply merge pairs) "merge")
     (apply merge pairs)))
 
+(defn save-foursquare-token! [token]
+  (console/warn "Saving token to local storage:" token))
+
 (defn event-listener [event]
   "Called when a storage event is fired. Note that this event currently only 
   fires when the storage change is triggered by another window, and when the value 
@@ -28,4 +31,5 @@
   (dispatch [:local-storage (.-key event) (.-newValue event)]))
 
 (defn init! []
+  "Not currently in use, but could be for opening popups"
   (.addEventListener js/window "storage" event-listener))

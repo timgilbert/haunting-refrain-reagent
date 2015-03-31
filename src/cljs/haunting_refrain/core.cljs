@@ -31,7 +31,7 @@
 ;;; Main
 
 (defn main []
-  (local-storage/init!)
+  "Main program. Note that this is typically only called once per page reload"
   (handlers/init! initial-state local-storage-keys)
-  (routing/init!)
+  ;(routing/init!)
   (reagent/render-component [views/shell] (.-body js/document)))
