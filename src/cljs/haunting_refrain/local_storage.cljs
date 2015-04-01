@@ -20,7 +20,10 @@
     (apply merge pairs)))
 
 (defn save-foursquare-token! [token]
-  (console/warn "Saving token to local storage:" token))
+  "Save the given token to foursquare"
+  (console/log "Saving token to local storage:" token)
+  ; This is not ideal - we should probably use the same map we do in initialization
+  (assoc! hodgepodge/local-storage :foursquare-token token))
 
 (defn event-listener [event]
   "Called when a storage event is fired. Note that this event currently only 

@@ -1,61 +1,18 @@
 (ns haunting-refrain.views
   (:require [haunting-refrain.foursquare :as foursquare]
+            [haunting-refrain.pikaday :as pikaday]
             [cljs.core.async :refer [put! chan <!]]
             [re-frame.core :refer [subscribe dispatch register-sub]]
             [kioo.core :refer [handle-wrapper]]
             [kioo.reagent :refer [content set-class remove-class do-> substitute listen]]
             [reagent.core :as reagent]
             [shodan.console :as console :include-macros true]
-            [shodan.inspection :refer [inspect]]
-            [cljsjs.pikaday :as pikaday]
-            [cljs-time.core :as cljs-time])
+            [shodan.inspection :refer [inspect]])
   (:require-macros [kioo.reagent :refer [defsnippet deftemplate]]
                    [reagent.ratom :refer [reaction]]))
 
 ;; -------------------------
-;; pikaday stuff
-;; cf https://github.com/thomasboyt/react-pikaday/blob/master/src/Pikaday.js
-;; https://github.com/Day8/re-frame/wiki/Creating-Reagent-Components#form-3-a-class-with-life-cycle-methods
-
-(defn pikaday-selector2
-  ""
-  [input-attrs options]
-  (let [_ 2 #_(console/log "aieee")]
-    (reagent/create-class
-      {:component-did-mount
-        #(console/warn "component mounted!")
-       :reagent-render
-        (fn [input-attrs options]
-          (console/log "render")
-          [:input input-attrs])})))
-
-(defn pikaday-selector
-  ""
-  [input-attrs options]
-  (let [_ (console/log "aieee")]
-    (fn [input-attrs options]
-      (console/log "render")
-      [:input {:type "text"}])))
-
-(defn- plain-date-selector [attrs selected-date]
-  (let []
-    (fn [{:keys [id]} selected-date]
-      [:input {:id id} ])))
-
-#_(def date-selector
-  (with-meta plain-date-selector
-    {:component-did-mount
-      (fn [this]
-        (let [dom-node (reagent/dom-node this)
-              pik (Pikaday. dom-node)]
-          ))}))
-
-;; -------------------------
 ;; kioo templates
-
-(defn onclick [evt]
-  (console/log "click!")
-  (console/log evt))
 
 (defsnippet foursquare-logged-out "templates/splash.html" [:.foursquare-logged-out] 
   [[foursquare-ratom]]
@@ -80,10 +37,10 @@
   {[:.foursquare-logged-in]  (substitute (foursquare-logged-in foursquare-ratom))
    [:.foursquare-logged-out] (substitute (foursquare-logged-out foursquare-ratom))
    ; Should parameterize these better
-   [:.start :input]          (substitute (pikaday-selector 
+   [:.start :input]          (substitute (pikaday/selector 
                                            {:id "startdate"} 
                                            {:on-change #(dispatch [:new-date :start %])}))
-   [:.end :input]            (substitute (pikaday-selector 
+   [:.end :input]            (substitute (pikaday/selector 
                                            {:id "enddate"} 
                                            {:on-change #(dispatch [:new-date :end %])}))})
 
@@ -117,6 +74,9 @@
         ;(assert (some? (page-map @page-ratom)))
         (shell-template (first page-fn) (rest page-fn))))))
 
+;; -------------------------
+;; Event handling
+
 (defn page-query
   [db [sid cid]]
   (console/log "sid:" (name sid) "cid:" cid)
@@ -129,6 +89,7 @@
   (reaction (get-in @db [:foursquare :token])))
 
 (defn init! []
+  "Register re-frame subscriptions"
   (register-sub 
     :go-to-page
     page-query)
@@ -137,7 +98,3 @@
     :foursquare-token
     foursquare-token-query))
 
-;(register-sub 
-;  :go-to-page
-;  (fn [db _]
-;    (reaction (:current-page @db))))
