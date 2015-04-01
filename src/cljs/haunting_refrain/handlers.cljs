@@ -38,12 +38,6 @@
 (defn- url-to-page [[page-name {:keys [url]}]]
   [url page-name])
 
-(defn save-foursquare-token [db token]
-  ; save the token to local storage
-  (local-storage/save-foursquare-token! token)
-  ; Redirect the user and replace the URL
-  (redirect-home! (assoc-in db [:foursquare :token] token)))
-
 (defn url-route-handler [db _]
   "This handler gets called when the page first loads. It is intended to look at the URL 
   the user is on and restore them to the proper state if necessary. This handler will be 
@@ -56,7 +50,10 @@
     ;(inspect urlmap "urlmap")
     (cond
       (= (count foursquare-match) 2) 
-        (save-foursquare-token db (second foursquare-match))
+        (let [token (second foursquare-match)]
+          ; save the token to local storage
+          (local-storage/save-foursquare-token! token)
+          (redirect-home! (assoc-in db [:foursquare :token] token)))
       selected-page
         (assoc-in db [:navigation :current-page] selected-page)
       (= path "")
@@ -85,12 +82,8 @@
 
 (defn foursquare-logout-handler [db [_]]
   "Called when the page starts on a foursquare callback URL."
+  (local-storage/save-foursquare-token! nil)
   (assoc-in db [:foursquare :token] nil))
-
-(defn localstorage-get-foursquare 
-  "Called when a value for the foursquare toekn is found in localstorage"
-  [db [_ token]]
-  (assoc-in db [:foursquare :token] token))
 
 ;; Set up all event handlers and fire off initial events
 (defn init! [initial-state local-storage-keys]
@@ -110,19 +103,9 @@
     url-route-handler)
 
   (register-handler
-    :open-login-window
-    debug
-    open-login-handler)
-
-  (register-handler
     :redirect-to-foursquare
     debug
     redirect-to-foursquare)
-
-  (register-handler
-    :foursquare-got-token
-    debug
-    foursquare-token-handler)
 
   (register-handler
     :foursquare-logout
@@ -132,6 +115,4 @@
   ; Fire off the first event
   (dispatch [:initialize initial-state local-storage-keys])
   ; Set page state from URL
-  (dispatch [:route])
-
-)
+  (dispatch [:route]))
