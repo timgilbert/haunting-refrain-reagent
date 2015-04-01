@@ -15,13 +15,12 @@
   {:navigation {:current-page nil
                 :states {:splash 
                           {:url "/" :name "Splash"}
-                         :foursquare-login 
-                          {:url "/foursquare-login" :name "Foursquare Login"}
-                         :foursquare-callback 
-                          {:url "foursquare-callback" :name "callback"}
+                         :about
+                           {:url "/about" :name "About"}
                          :playlist 
                           {:url "/playlist" :name "Playlist"}}}
-   :foursquare {:token nil}})
+   :foursquare {:token nil}
+   :date-range {:start nil :end nil}})
 
 ;; Set of localstorage keywords to (get-in) index into app-state map
 (defonce local-storage-keys
@@ -34,4 +33,5 @@
   "Main program. Note that this is typically only called once per page reload"
   (handlers/init! initial-state local-storage-keys)
   ;(routing/init!)
+  (views/init!)
   (reagent/render-component [views/shell] (.-body js/document)))
