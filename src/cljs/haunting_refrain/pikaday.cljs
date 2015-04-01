@@ -20,16 +20,21 @@
 (defn selector
   ""
   [input-attrs options]
-  (let [_ 2 #_(console/log "aieee")]
+  (let []
     (reagent/create-class
       {:component-did-mount
         #(console/warn "component mounted!")
-       :reagent-render
+       :display-name "pikaday-component"
+       :should-component-update
+        (fn [this next-props next-state]
+          (console/log "update")
+          (not= (.-props this) next-props))
+       :render
         (fn [input-attrs options]
           (console/log "render")
           [:input input-attrs])})))
 
-(defn pikaday-selector
+(defn selector3
   ""
   [input-attrs options]
   (let [_ (console/log "aieee")]
@@ -50,6 +55,6 @@
               pik (js/Pikaday. dom-node)]
           ))}))
 
-(defn selectorX [id selected-date]
+(defn selector4 [attrs selected-date]
   (let [pik (js/Pikaday.)]
-    [:input id]))
+    [:input attrs]))

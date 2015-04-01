@@ -67,12 +67,12 @@
                   :playlist [playlist] 
                   :about [about]}]
     (fn []
-      (let [page-fn (get page-map @page-ratom [error])
+      (let [page-fn (get page-map @page-ratom)
             foursquare-token @foursquare-ratom]
         (console/log "page-ratom:" @page-ratom)
         (console/log "page-fn:" (clj->js page-fn))
-        ;(assert (some? (page-map @page-ratom)))
-        (shell-template (first page-fn) (rest page-fn))))))
+        (when page-fn
+          (shell-template (first page-fn) (rest page-fn)))))))
 
 ;; -------------------------
 ;; Event handling

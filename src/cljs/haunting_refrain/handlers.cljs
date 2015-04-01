@@ -28,6 +28,10 @@
 (defn goto-handler [db [_ new-page]]
   (assoc db :current-page new-page))
 
+(defn new-date-handler [db [_ which date]]
+  "#(dispatch [:new-date :start %])"
+  (assoc-in db [:date-range which] date))
+
 (defn redirect-to-foursquare [_ _]
   (foursquare/redirect-to-foursquare!))
 
@@ -62,6 +66,11 @@
     :foursquare-logout
     debug
     foursquare-logout-handler)
+
+  (register-handler
+    :new-date
+    debug
+    new-date-handler)
 
   ; Fire off the first event
   (dispatch [:initialize initial-state local-storage-keys])
