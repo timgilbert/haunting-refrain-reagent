@@ -1,4 +1,4 @@
-(ns haunting-refrain.date-selector
+(ns haunting-refrain.pikaday
   (:require [haunting-refrain.foursquare :as foursquare]
             [cljs.core.async :refer [put! chan <!]]
             [re-frame.core :refer [subscribe dispatch register-sub]]
